@@ -1,6 +1,7 @@
 package ra.ecommerceapi.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,11 @@ public class AUserController {
         return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findAllExceptAdmin(), HttpStatus.OK), HttpStatus.OK);
     }
 
+    @GetMapping("/pagination")
+    public ResponseEntity<?> pagination(Pageable pageable) {
+        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findAllPagination(pageable), HttpStatus.OK), HttpStatus.OK);
+    }
+
 //    @GetMapping("/{id}")
 //    public ResponseEntity<?> findById(@PathVariable Long id) {
 //        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findById(id),HttpStatus.OK), HttpStatus.OK);
@@ -29,13 +35,14 @@ public class AUserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        userService.findUserExceptAdminById(id);
         userService.toggleStatus(id);
-        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findById(id),HttpStatus.OK), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findUserExceptAdminById(id),HttpStatus.OK), HttpStatus.OK);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> findByFullName(@RequestParam String fullName) {
-        List<User> users=userService.findAllByFullName(fullName);
+        List<User> users = userService.findAllByFullName(fullName);
         if (users.isEmpty()){
             return new ResponseEntity<>(new ResponseDataSuccess<>("Not found user with name",HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
         }

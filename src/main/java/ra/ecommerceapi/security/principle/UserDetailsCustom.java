@@ -14,6 +14,7 @@ import java.util.Date;
 @Builder
 
 public class UserDetailsCustom implements UserDetails {
+
     private Long id;
     private String email;
     private String password;

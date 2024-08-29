@@ -13,21 +13,21 @@ import ra.ecommerceapi.service.ICategoryService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/u/category")
+@RequestMapping("/api.com/v2/u/categories")
 public class UCategoryController {
     private final ICategoryService categoryService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> list() {
-        return new ResponseEntity<>(new ResponseDataSuccess<>(categoryService.findAllByStatusTrue(), HttpStatus.OK), HttpStatus.OK);
-    }
+//    @GetMapping("/")
+//    public ResponseEntity<?> list() {
+//        return new ResponseEntity<>(new ResponseDataSuccess<>(categoryService.findAllByStatusTrue(), HttpStatus.OK), HttpStatus.OK);
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         return new ResponseEntity<>(new ResponseDataSuccess<>(categoryService.findById(id),HttpStatus.OK), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> add(@Valid @RequestBody Category category) throws CheckDuplicateName {
         return new ResponseEntity<>(new ResponseDataSuccess<>(categoryService.save(category),HttpStatus.CREATED), HttpStatus.CREATED);
     }

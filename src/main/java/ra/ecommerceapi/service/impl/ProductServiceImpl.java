@@ -2,7 +2,12 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import ra.ecommerceapi.exception.CheckDuplicateName;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
 import ra.ecommerceapi.model.entity.Product;
@@ -89,8 +94,30 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
+    public Page<Product> findAllPaginationAdmin(String search, Pageable pageable) {
+        Page<Product> products;
+        if (search.isEmpty()){
+            products=productRepo.findAll(pageable);
+        }else {
+            products=productRepo.findAllByNameContains(search,pageable);
+        }
+        return products;
+    }
+
+    @Override
+    public Page<Product> findAllPaginationUser(String search, Pageable pageable) {
+        Page<Product> products;
+        if (search.isEmpty()){
+            products=productRepo.findAll(pageable);
+        }else {
+            products=productRepo.findAllByNameContainsAndStatusTrue(search,pageable);
+        }
+        return products;
+    }
+
+    @Override
     public List<Product> findByNameOrDescription(String search) {
-        return productRepo.findByNameOrDescription(search);
+        return productRepo.findAllByNameContainsOrDescriptionContains(search,search);
     }
 
     @Override
