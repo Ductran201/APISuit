@@ -21,6 +21,11 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
+    public Role findById(Long id) {
+        return roleRepo.findById(id).orElseThrow(()-> new NoSuchElementException("Not found the role"));
+    }
+
+    @Override
     public List<Role> findAll() {
         return roleRepo.findAll();
     }

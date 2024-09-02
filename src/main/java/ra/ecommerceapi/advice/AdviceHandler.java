@@ -6,6 +6,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ra.ecommerceapi.exception.CheckDuplicateName;
+import ra.ecommerceapi.exception.CustomException;
+import ra.ecommerceapi.model.constant.EHttpStatus;
+import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.response.ResponseDataError;
 
 import java.util.HashMap;
@@ -30,6 +33,15 @@ public class AdviceHandler {
     @ExceptionHandler(CheckDuplicateName.class)
     public ResponseEntity<?> handleDuplicateName(CheckDuplicateName e){
         return new ResponseEntity<>(new ResponseDataError<>(e.getMessage(),HttpStatus.BAD_REQUEST),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<?> handleCustomException(CustomException e){
+        return new ResponseEntity<>(ResponseWrapper.builder()
+                .data(e.getMessage())
+                .status(EHttpStatus.FAILED)
+                .code(123)
+                .build(),HttpStatus.NOT_ACCEPTABLE);
     }
 
 }

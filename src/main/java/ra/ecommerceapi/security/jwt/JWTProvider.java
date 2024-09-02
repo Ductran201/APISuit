@@ -18,7 +18,7 @@ public class JWTProvider {
 
     public String generateAccessToken(UserDetailsCustom userDetailsCustom){
         return Jwts.builder()
-                .setSubject(userDetailsCustom.getEmail())
+                .setSubject(userDetailsCustom.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(new Date().getTime() + expiredTime))
                 .signWith(SignatureAlgorithm.HS512, secretKey)

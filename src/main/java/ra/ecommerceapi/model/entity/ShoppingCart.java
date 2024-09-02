@@ -11,12 +11,13 @@ import ra.ecommerceapi.model.base.BaseObject;
 @Getter
 @Setter
 @Builder
-public class Address extends BaseObject {
-    private String fullAddress;
-    private String nameReceiver;
-    private String phoneReceiver;
+public class ShoppingCart extends BaseObject {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
+    private Integer orderQuantity;
 
 }

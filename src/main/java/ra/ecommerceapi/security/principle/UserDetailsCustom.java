@@ -3,6 +3,7 @@ package ra.ecommerceapi.security.principle;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import ra.ecommerceapi.model.entity.User;
 
 import java.util.Collection;
 import java.util.Date;
@@ -15,16 +16,7 @@ import java.util.Date;
 
 public class UserDetailsCustom implements UserDetails {
 
-    private Long id;
-    private String email;
-    private String password;
-    private String fullName;
-    private String avatar;
-    private String phone;
-    private String address;
-    private Boolean gender;
-    private Boolean status;
-    private Date createdDate;
+    private User user;
     private Collection<? extends GrantedAuthority> authorities;
 
     @Override
@@ -34,12 +26,12 @@ public class UserDetailsCustom implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.password;
+        return this.user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.user.getEmail();
     }
 
     @Override

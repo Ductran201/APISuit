@@ -2,17 +2,20 @@ package ra.ecommerceapi.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.entity.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
-    List<User> findAll();
 
-    Page<User> findAllPagination(Pageable pageable);
+    Page<User> findAllPaginationAdmin(String search,Pageable pageable);
 
-    List<User> findAllExceptAdmin();
+    void addRoleForUser(Long userId,Long roleId) throws CustomException;
+
+    void deleteRoleForUser(Long userId,Long roleId) throws CustomException;
+
 
     User findUserExceptAdminById(Long id);
 
@@ -26,6 +29,6 @@ public interface IUserService {
 
     void toggleStatus(Long id);
 
-    List<User> findAllByFullName(String fullName);
+    User findById(Long id);
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ra.ecommerceapi.exception.CheckDuplicateName;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.SignInRequest;
 import ra.ecommerceapi.model.dto.request.SignUpRequest;
 import ra.ecommerceapi.model.dto.response.ResponseDataSuccess;
@@ -27,7 +28,7 @@ public class AuthController {
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> signUp(@Valid @RequestBody SignInRequest signInRequest){
+    public ResponseEntity<?> signIn(@Valid @RequestBody SignInRequest signInRequest) throws CustomException {
         return new ResponseEntity<>(new ResponseDataSuccess<>(authService.signIn(signInRequest), HttpStatus.OK),HttpStatus.OK );
     }
 }

@@ -17,14 +17,14 @@ import ra.ecommerceapi.service.ICategoryService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api.com/v2/a/categories")
+@RequestMapping("/api.com/v2/admin/categories")
 public class ACategoryController {
     private final ICategoryService categoryService;
 
     /**
      * @param search   String
      * @param pageable Pageable
-     * @apiNote handle get all categories with pagination and search for admin
+     * @apiNote handle get all categories with pagination and search for admin role
      */
     @GetMapping("")
     public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search

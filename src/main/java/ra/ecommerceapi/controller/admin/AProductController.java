@@ -17,10 +17,15 @@ import ra.ecommerceapi.service.IProductService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/a/products")
+@RequestMapping("api.com/v2/admin/products")
 public class AProductController {
     private final IProductService productService;
 
+    /**
+     * @param search   String
+     * @param pageable Pageable
+     * @apiNote handle get all products with pagination and search for admin role
+     */
     @GetMapping("")
     public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
             , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {

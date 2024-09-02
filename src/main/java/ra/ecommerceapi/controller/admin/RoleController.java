@@ -11,10 +11,10 @@ import ra.ecommerceapi.service.IRoleService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/role")
+@RequestMapping("api.com/v2/admin/role")
 public class RoleController {
     private final IRoleService roleService;
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> listRole() {
         return new ResponseEntity<>(new ResponseDataSuccess<>(roleService.findAll(), HttpStatus.OK), HttpStatus.OK);
     }

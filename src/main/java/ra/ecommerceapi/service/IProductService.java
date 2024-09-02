@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import ra.ecommerceapi.exception.CheckDuplicateName;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.model.dto.response.ProductUserDTO;
 import ra.ecommerceapi.model.entity.Category;
 import ra.ecommerceapi.model.entity.Product;
 
@@ -23,9 +24,10 @@ public interface IProductService {
 
     Page<Product> findAllPaginationAdmin(String search, Pageable pageable);
 
-    Page<Product> findAllPaginationUser(String search, Pageable pageable);
+    Page<ProductUserDTO> findAllPaginationUser(String search, Pageable pageable);
 
-    List<Product> findByNameOrDescription(String search);
+    Page<ProductUserDTO> findAllByCategoryId(Long id, Pageable pageable);
 
-    List<Product> findAllByCategoryId(Long id);
+
+
 }

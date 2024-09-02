@@ -2,30 +2,51 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.entity.User;
+import ra.ecommerceapi.repository.IRoleRepo;
 import ra.ecommerceapi.repository.IUserRepo;
+import ra.ecommerceapi.service.IRoleService;
 import ra.ecommerceapi.service.IUserService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements IUserService {
     private final IUserRepo userRepo;
 
+    private final IRoleService roleService;
+
     @Override
-    public List<User> findAll() {
-        return userRepo.findAll();
+    public Page<User> findAllPaginationAdmin(String search, Pageable pageable) {
+        return userRepo.findAllByFullNameContainingExceptAdmin(search, pageable);
     }
 
     @Override
-    public List<User> findAllExceptAdmin() {
-        return userRepo.findAllExceptAdmin();
+    public void addRoleForUser(Long userId, Long roleId) throws CustomException {
+        User user = findUserExceptAdminById(userId);
+        //check exist role
+        if (user.getRoleSet().stream().anyMatch(r -> r.getId().equals(roleId))) {
+            throw new CustomException("This user already has this role");
+        }
+        user.getRoleSet().add(roleService.findById(roleId));
+        userRepo.save(user);
+    }
+
+    @Override
+    public void deleteRoleForUser(Long userId, Long roleId) throws CustomException {
+        User user = findUserExceptAdminById(userId);
+        //check exist role
+        if (user.getRoleSet().stream().anyMatch(r -> r.getId().equals(roleId))) {
+            user.getRoleSet().remove(roleService.findById(roleId));
+            userRepo.save(user);
+        } else {
+            throw new CustomException("This user has no this role");
+        }
     }
 
     @Override
@@ -35,7 +56,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User save(User user) {
-        user.setStatus(true);
         return userRepo.save(user);
     }
 
@@ -60,14 +80,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<User> findAllByFullName(String fullName) {
-        return userRepo.findAllByFullNameContaining(fullName);
+    public User findById(Long id) {
+        return userRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found this user"));
     }
 
-    @Override
-    public Page<User> findAllPagination(Pageable pageable) {
-        Pageable pageableCustom = PageRequest.of(pageable.getPageNumber(), 2, pageable.getSort());
-        return userRepo.findAll(pageableCustom);
 
 //        public PageDto findAll(Pageable pageable) {
 //            Pageable custom = PageRequest.of(pageable.getPageNumber(),5,pageable.getSort());
@@ -82,8 +98,6 @@ public class UserServiceImpl implements IUserService {
 //                    .sort(page.getSort())
 //                    .build();
 
-
-    }
 }
 
 

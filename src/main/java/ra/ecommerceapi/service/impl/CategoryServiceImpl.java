@@ -27,35 +27,13 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public Page<Category> findAllPaginationAdmin(String search, Pageable pageable) {
-
-        Page<Category> categories;
-        if (search.isEmpty()) {
-            categories = categoryRepo.findAll(pageable);
-        }else {
-            categories=categoryRepo.findAllByNameContains(search,pageable);
-        }
-
-        return categories;
+        return categoryRepo.findAllByNameContains(search, pageable);
     }
 
     @Override
     public Page<Category> findAllPaginationUser(String search, Pageable pageable) {
-        Page<Category> categories;
-        if (search.isEmpty()){
-            categories=categoryRepo.findAll(pageable);
-        }else {
-            categories=categoryRepo.findAllByNameContainsAndStatusTrue(search,pageable);
-        }
-
-        return categories;
+        return categoryRepo.findAllByNameContainsAndStatusTrue(search, pageable);
     }
-
-//    @Override
-//    public Page<Category> findAllPaginationAdmin(String search,Pageable pageable) {
-//        Pageable pageableCustom = PageRequest.of(pageable.getPageNumber(),2,pageable.getSort());
-//        return categoryRepo.findAll(pageableCustom);
-//    }
-
 
     @Override
     public Category findById(Long id) {
@@ -77,12 +55,12 @@ public class CategoryServiceImpl implements ICategoryService {
 
     @Override
     public Category save(Category category, Long id) throws CheckDuplicateName {
+        Category oldCategory = findById(id);
 
-        if (!Objects.equals(category.getName(), findById(id).getName()) && categoryRepo.existsByName(category.getName())) {
+        if (!category.getName().equals(oldCategory.getName()) && categoryRepo.existsByName(category.getName())) {
             throw new CheckDuplicateName("Exist this category name");
         }
 
-        Category oldCategory = findById(id);
         oldCategory.setName(category.getName());
         oldCategory.setDescription(category.getDescription());
         return categoryRepo.save(oldCategory);

@@ -10,10 +10,8 @@ spring:
           auth: true
           starttls:
             enable: true
-
-#      mail.smtp.auth: true
-#      mail.smtp.starttls.enable: true
-
+  #      mail.smtp.auth: true
+  #      mail.smtp.starttls.enable: true
   application:
     name: E-commerceAPI
   jpa:
@@ -35,7 +33,7 @@ spring:
 server:
   port: 9999
 
-jwt.expired-time: 86400
+jwt.expired-time: 3600000
 jwt.secret-key: duc1531
 
 firebase-bucket: e-commerceapi-a15ef.appspot.com

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import ra.ecommerceapi.model.base.BaseObject;
 
 import java.util.Date;
 
@@ -12,17 +13,14 @@ import java.util.Date;
 @Getter@Setter
 @Builder
 @Entity
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Category extends BaseObject {
+
     @NotBlank
     @Column(unique = true)
     private String name;
     @NotBlank
     private String description;
     private String image;
-    private Boolean status;
     @Temporal(TemporalType.DATE)
     private Date createdDate;
 }

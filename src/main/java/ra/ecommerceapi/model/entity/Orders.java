@@ -6,24 +6,23 @@ import ra.ecommerceapi.model.base.BaseObject;
 
 import java.util.Date;
 
-@AllArgsConstructor
+@Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Builder
-@Entity
-public class Product extends BaseObject {
+public class Orders extends BaseObject {
 
-    @Column(unique = true)
-    private String name;
-    private String description;
-    private String image;
+    private Double totalPrice;
+    private String note;
     @Temporal(TemporalType.DATE)
     private Date createdDate;
     @Temporal(TemporalType.DATE)
-    private Date updatedDate;
+    private Date receivedDate;
     @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
 }

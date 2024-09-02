@@ -28,6 +28,8 @@ public class User {
     @Temporal(TemporalType.DATE)
     private Date createdDate;
     @Temporal(TemporalType.DATE)
+    private Date updatedDate;
+    @Temporal(TemporalType.DATE)
     private Date dob;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -37,5 +39,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roleSet;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="wish_list",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name ="product_id")
+    )
+    private Set<Product> wishList;
+
 
 }

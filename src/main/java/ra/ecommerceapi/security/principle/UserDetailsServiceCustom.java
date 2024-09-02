@@ -18,23 +18,13 @@ public class UserDetailsServiceCustom implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepo.findByEmail(username);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
+            User user = userRepo.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User not found"));
             return UserDetailsCustom.builder()
-                    .id(user.getId())
-                    .email(user.getEmail())
-                    .password(user.getPassword())
-                    .phone(user.getPhone())
-                    .address(user.getAddress())
-                    .status(user.getStatus())
-                    .gender(user.getGender())
-                    .avatar(user.getAvatar())
+                    .user(user)
                     .authorities(user.getRoleSet().stream()
                             .map(roles -> new SimpleGrantedAuthority(roles.getRoleName().name()))
                             .toList())
                     .build();
-        }
-        throw new UsernameNotFoundException("Email not found");
     }
+
 }

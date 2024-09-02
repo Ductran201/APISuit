@@ -4,12 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import ra.ecommerceapi.exception.CheckDuplicateName;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
+import ra.ecommerceapi.model.dto.response.ProductUserDTO;
 import ra.ecommerceapi.model.entity.Product;
 import ra.ecommerceapi.repository.IProductRepo;
 import ra.ecommerceapi.service.ICategoryService;
@@ -49,11 +47,14 @@ public class ProductServiceImpl implements IProductService {
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
-                .status(true)
+//                .status(true)
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .category(categoryService.findById(productRequest.getCategoryId()))
                 .build();
+
+        product.setStatus(true);
+
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             product.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
@@ -73,6 +74,7 @@ public class ProductServiceImpl implements IProductService {
 
         Product oldProduct = findById(id);
 
+        oldProduct.setStatus(productRequest.getStatus());
         oldProduct.setName(productRequest.getName());
         oldProduct.setDescription(productRequest.getDescription());
         oldProduct.setCategory(categoryService.findById(productRequest.getCategoryId()));
@@ -95,34 +97,22 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Page<Product> findAllPaginationAdmin(String search, Pageable pageable) {
-        Page<Product> products;
-        if (search.isEmpty()){
-            products=productRepo.findAll(pageable);
-        }else {
-            products=productRepo.findAllByNameContains(search,pageable);
+        return productRepo.findAllByNameContains(search,pageable);
+    }
+
+    @Override
+    public Page<ProductUserDTO> findAllPaginationUser(String search, Pageable pageable) {
+        return productRepo.findAllByNameContainsOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+    }
+
+    @Override
+    public Page<ProductUserDTO> findAllByCategoryId(Long id,Pageable pageable) {
+
+        Page<ProductUserDTO> productUserDTOS= productRepo.findAllByCategoryId(id,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+        if (productUserDTOS.isEmpty()){
+            throw new NoSuchElementException("Not found the product of category");
         }
-        return products;
-    }
-
-    @Override
-    public Page<Product> findAllPaginationUser(String search, Pageable pageable) {
-        Page<Product> products;
-        if (search.isEmpty()){
-            products=productRepo.findAll(pageable);
-        }else {
-            products=productRepo.findAllByNameContainsAndStatusTrue(search,pageable);
-        }
-        return products;
-    }
-
-    @Override
-    public List<Product> findByNameOrDescription(String search) {
-        return productRepo.findAllByNameContainsOrDescriptionContains(search,search);
-    }
-
-    @Override
-    public List<Product> findAllByCategoryId(Long id) {
-        return productRepo.findAllByCategoryId(id);
+        return productUserDTOS;
     }
 
 }

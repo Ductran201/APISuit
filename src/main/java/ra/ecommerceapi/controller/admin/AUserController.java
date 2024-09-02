@@ -2,70 +2,67 @@ package ra.ecommerceapi.controller.admin;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ra.ecommerceapi.model.dto.response.ResponseDataSuccess;
-import ra.ecommerceapi.model.entity.User;
+import ra.ecommerceapi.exception.CustomException;
+import ra.ecommerceapi.model.constant.EHttpStatus;
+import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.service.IUserService;
 
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/users")
+@RequestMapping("api.com/v2/admin/users")
 public class AUserController {
     private final IUserService userService;
 
-    @GetMapping("/")
-    public ResponseEntity<?> listUser() {
-        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findAllExceptAdmin(), HttpStatus.OK), HttpStatus.OK);
+    @GetMapping("")
+    public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
+            ,@PageableDefault(page = 0,size = 2,sort = "id",direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok().body(
+                ResponseWrapper.builder()
+                        .data(userService.findAllPaginationAdmin(search, pageable))
+                        .status(EHttpStatus.SUCCESS)
+                        .code(200)
+                        .build());
     }
 
-    @GetMapping("/pagination")
-    public ResponseEntity<?> pagination(Pageable pageable) {
-        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findAllPagination(pageable), HttpStatus.OK), HttpStatus.OK);
-    }
-
-//    @GetMapping("/{id}")
-//    public ResponseEntity<?> findById(@PathVariable Long id) {
-//        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findById(id),HttpStatus.OK), HttpStatus.OK);
-//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
         userService.findUserExceptAdminById(id);
         userService.toggleStatus(id);
-        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.findUserExceptAdminById(id),HttpStatus.OK), HttpStatus.OK);
+        return ResponseEntity.ok().body(
+                ResponseWrapper.builder()
+                        .data("Change status successfully")
+                        .status(EHttpStatus.SUCCESS)
+                        .code(200)
+                        .build());
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<?> findByFullName(@RequestParam String fullName) {
-        List<User> users = userService.findAllByFullName(fullName);
-        if (users.isEmpty()){
-            return new ResponseEntity<>(new ResponseDataSuccess<>("Not found user with name",HttpStatus.NOT_FOUND), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(new ResponseDataSuccess<>(users,HttpStatus.OK), HttpStatus.OK);
+    // Add role for user
+    @PostMapping("/{userId}/role/{roleId}")
+    public ResponseEntity<?> addRoleForUser(@PathVariable Long userId,@PathVariable Long roleId) throws CustomException {
+        userService.addRoleForUser(userId,roleId);
+        return ResponseEntity.ok().body(
+                new ResponseWrapper<>("Add role successfully",EHttpStatus.SUCCESS,200)
+        );
+
     }
 
-//    @PostMapping("/")
-//    public ResponseEntity<?> add(@Valid @RequestBody Category category) throws CheckDuplicateName {
-//        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.save(category),HttpStatus.CREATED), HttpStatus.CREATED);
-//    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<?> edit(@PathVariable Long id,@Valid @RequestBody Category category) throws CheckDuplicateName {
-//        return new ResponseEntity<>(new ResponseDataSuccess<>(userService.save(category,id),HttpStatus.OK), HttpStatus.OK);
-//    }
+    @DeleteMapping("/{userId}/role/{roleId}")
+    public ResponseEntity<?> deleteRoleForUser(@PathVariable Long userId,@PathVariable Long roleId) throws CustomException {
+        userService.deleteRoleForUser(userId,roleId);
+//        return ResponseEntity.ok().body(
+//                new ResponseWrapper<>("Delete role successfully",EHttpStatus.SUCCESS,200));
+        return new ResponseEntity<>("Delete role successfully", HttpStatus.NO_CONTENT);
+    }
 
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<?> delete(@PathVariable Long id) {
-//        userService.findById(id);
-//        userService.delete(id);
-//        return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
-//    }
 
 
 }
