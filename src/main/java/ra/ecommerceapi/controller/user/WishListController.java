@@ -13,10 +13,9 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/u/wish-list")
+@RequestMapping("api.com/v2/user/wish-list")
 public class WishListController {
     private final IWishListService wishListService;
-    private final ModelMapper modelMapper;
 
     @GetMapping("")
     public ResponseEntity<?> findAll(){
@@ -27,13 +26,13 @@ public class WishListController {
     @PostMapping("/{idProduct}")
     public ResponseEntity<?> toggleWishList(@PathVariable Long idProduct){
         wishListService.toggleWishList(idProduct);
-        return ResponseEntity.ok().body(new ResponseWrapper<>(null, EHttpStatus.SUCCESS,200));
+        return ResponseEntity.ok().body(new ResponseWrapper<>("Toggle successfully", EHttpStatus.SUCCESS,200));
     }
 
     @DeleteMapping("/{idProduct}")
     public ResponseEntity<?> removeWishList(@PathVariable Long idProduct){
         wishListService.removeWishList(idProduct);
-        return ResponseEntity.ok().body(new ResponseWrapper<>(null,EHttpStatus.SUCCESS,200));
+        return ResponseEntity.ok().body(new ResponseWrapper<>("Remove product from wish list successfully",EHttpStatus.SUCCESS,200));
     }
 
 }

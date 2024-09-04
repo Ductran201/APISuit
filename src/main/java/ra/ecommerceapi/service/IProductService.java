@@ -26,7 +26,7 @@ public interface IProductService {
 
     Page<ProductUserDTO> findAllPaginationUser(String search, Pageable pageable);
 
-    Page<ProductUserDTO> findAllByCategoryId(Long id, Pageable pageable);
+    Page<ProductUserDTO> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
 
 
 

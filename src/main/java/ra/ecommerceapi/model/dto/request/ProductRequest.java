@@ -1,6 +1,7 @@
 package ra.ecommerceapi.model.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -21,6 +22,12 @@ public class ProductRequest {
     private String description;
     private MultipartFile file;
     private Boolean status;
+    @NotNull
+    @Min(0)
+    private Double price;
+    @NotNull
+    @Min(1)
+    private Integer stock;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy")
     private Date createdDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy")

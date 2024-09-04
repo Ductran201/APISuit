@@ -13,7 +13,7 @@ import ra.ecommerceapi.service.IProductService;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("api.com/v2/u/products")
+@RequestMapping("api.com/v2/products")
 public class ProductController {
     private final IProductService productService;
 
@@ -39,7 +39,7 @@ public class ProductController {
             , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
-                        .data(productService.findAllByCategoryId(categoryId, pageable))
+                        .data(productService.findAllByCategoryIdAndStatusTrue(categoryId, pageable))
                         .status(EHttpStatus.SUCCESS)
                         .code(200)
                         .build()

@@ -22,7 +22,6 @@ public class User {
     private String fullName;
     private String avatar;
     private String phone;
-    private String address;
     private Boolean gender;
     private Boolean status;
     @Temporal(TemporalType.DATE)

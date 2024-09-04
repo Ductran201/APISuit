@@ -102,7 +102,6 @@ public class AuthServiceImpl implements IAuthService {
                 .avatar(userDetailsCustom.getUser().getAvatar())
                 .dob(userDetailsCustom.getUser().getDob())
                 .phone(userDetailsCustom.getUser().getPhone())
-                .address(userDetailsCustom.getUser().getAddress())
                 .status(userDetailsCustom.getUser().getStatus())
                 .roles(userDetailsCustom.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()))
                 .build();

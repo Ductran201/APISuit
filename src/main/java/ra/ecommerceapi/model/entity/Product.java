@@ -18,6 +18,8 @@ public class Product extends BaseObject {
     private String name;
     private String description;
     private String image;
+    private Double price;
+    private Integer stock;
     @Temporal(TemporalType.DATE)
     private Date createdDate;
     @Temporal(TemporalType.DATE)

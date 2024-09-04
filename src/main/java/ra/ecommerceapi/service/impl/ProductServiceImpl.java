@@ -102,13 +102,13 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Page<ProductUserDTO> findAllPaginationUser(String search, Pageable pageable) {
-        return productRepo.findAllByNameContainsOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
     }
 
     @Override
-    public Page<ProductUserDTO> findAllByCategoryId(Long id,Pageable pageable) {
+    public Page<ProductUserDTO> findAllByCategoryIdAndStatusTrue(Long id,Pageable pageable) {
 
-        Page<ProductUserDTO> productUserDTOS= productRepo.findAllByCategoryId(id,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+        Page<ProductUserDTO> productUserDTOS= productRepo.findAllByCategoryIdAndStatusTrue(id,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
         if (productUserDTOS.isEmpty()){
             throw new NoSuchElementException("Not found the product of category");
         }

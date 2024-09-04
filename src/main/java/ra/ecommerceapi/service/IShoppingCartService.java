@@ -1,17 +1,24 @@
 package ra.ecommerceapi.service;
 
+import ra.ecommerceapi.exception.CustomException;
+import ra.ecommerceapi.model.dto.request.CartRequest;
+import ra.ecommerceapi.model.dto.response.CartResponse;
 import ra.ecommerceapi.model.entity.ShoppingCart;
+import ra.ecommerceapi.model.entity.User;
 
 import java.util.List;
 
 public interface IShoppingCartService {
-    List<ShoppingCart> findAll();
+    List<CartResponse> findAll();
 
-    ShoppingCart findById(Long id);
+    ShoppingCart findByUserAndId(Long id);
 
-    ShoppingCart save(ShoppingCart shoppingCart);
+    CartResponse save(CartRequest cartRequest) throws CustomException;
 
-    ShoppingCart save(ShoppingCart shoppingCart,Long id);
+    CartResponse save(CartRequest cartRequest,Long id);
 
     void delete(Long id);
+
+    void clear();
+
 }

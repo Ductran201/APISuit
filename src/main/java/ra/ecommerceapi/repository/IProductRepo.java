@@ -10,7 +10,7 @@ import ra.ecommerceapi.model.entity.Product;
 
 import java.util.List;
 
-public interface IProductRepo extends JpaRepository<Product,Long> {
+public interface IProductRepo extends JpaRepository<Product, Long> {
     @Query("select p.image from Product p where p.id= :id")
     String getImgById(@Param("id") Long id);
 
@@ -20,8 +20,8 @@ public interface IProductRepo extends JpaRepository<Product,Long> {
 
     Page<Product> findAllByNameContains(String name, Pageable pageable);
 
-    Page<Product> findAllByNameContainsOrDescriptionContainsAndStatusTrue(String name,String description,Pageable pageable);
+    Page<Product> findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(String name, String description, Pageable pageable);
 
-    Page<Product> findAllByCategoryId(Long id,Pageable pageable);
+    Page<Product> findAllByCategoryIdAndStatusTrue(Long id,Pageable pageable);
 
 }
