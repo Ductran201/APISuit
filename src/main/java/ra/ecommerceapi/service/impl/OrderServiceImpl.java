@@ -1,6 +1,7 @@
 package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.hibernate.query.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,7 +12,9 @@ import ra.ecommerceapi.model.constant.OrderStatus;
 import ra.ecommerceapi.model.dto.request.OrderRequestStatus;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
 import ra.ecommerceapi.model.entity.Orders;
+import ra.ecommerceapi.model.entity.User;
 import ra.ecommerceapi.repository.IOrderRepo;
+import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IOrderService;
 
 import java.util.List;
@@ -22,11 +25,11 @@ import java.util.NoSuchElementException;
 public class OrderServiceImpl implements IOrderService {
     private final IOrderRepo orderRepo;
     private final ModelMapper modelMapper;
-
+    private final IAuthService authService;
 
     @Override
     public Page<OrderResponse> findAllPaginationAdmin(String search, Pageable pageable) {
-        return orderRepo.findAllByCodeContains(search,pageable).map(or->modelMapper.map(or, OrderResponse.class));
+        return orderRepo.findAllByCodeContains(search, pageable).map(or -> modelMapper.map(or, OrderResponse.class));
 //        return orderRepo.findAllByCode(search,pageable).map(o -> {
 //            OrderResponse orderResponse = OrderResponse.builder()
 //                    .id(o.getId())
@@ -45,21 +48,40 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Page<OrderResponse> findAllPaginationUser(String search, Pageable pageable) {
+        User userCurrent = authService.getCurrentUser().getUser();
+        return orderRepo.findAllByUserAndCodeContains(userCurrent, search, pageable).map(or -> modelMapper.map(or, OrderResponse.class));
+    }
+
+    @Override
     public Page<OrderResponse> filterByStatus(String orderStatus, Pageable pageable) throws CustomException {
 //        return orderRepo.findAllByStatus(orderStatus,pageable).map(or->modelMapper.map(or, OrderResponse.class));
         OrderStatus s;
         try {
             s = OrderStatus.valueOf(orderStatus);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException("Status Not Found", HttpStatus.NOT_FOUND);
         }
-        return orderRepo.findAllByStatus(s,pageable).map(o->modelMapper.map(o,OrderResponse.class));
+        return orderRepo.findAllByStatus(s, pageable).map(o -> modelMapper.map(o, OrderResponse.class));
 
     }
 
     @Override
+    public Page<OrderResponse> filterByStatusByUser(String orderStatus, Pageable pageable) throws CustomException {
+        User userCurrent = authService.getCurrentUser().getUser();
+
+        OrderStatus s;
+        try {
+            s = OrderStatus.valueOf(orderStatus);
+        } catch (Exception e) {
+            throw new CustomException("Status Not Found", HttpStatus.NOT_FOUND);
+        }
+        return orderRepo.findAllByUserAndStatus(userCurrent, s, pageable).map(o -> modelMapper.map(o, OrderResponse.class));
+    }
+
+    @Override
     public OrderResponse findById(Long id) {
-        Orders orders= orderRepo.findById(id).orElseThrow(()-> new NoSuchElementException("Not found this order"));
+        Orders orders = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found this order"));
         return OrderResponse.builder()
                 .id(orders.getId())
                 .code(orders.getCode())
@@ -75,10 +97,55 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public OrderResponse findByUSerAndCode(String code) throws CustomException {
+        User userCurrent = authService.getCurrentUser().getUser();
+        Orders oldOrder = orderRepo.findByUserAndCode(userCurrent, code).orElseThrow(() -> new CustomException("Not found this order", HttpStatus.NOT_FOUND));
+        return OrderResponse.builder()
+                .id(oldOrder.getId())
+                .code(oldOrder.getCode())
+                .note(oldOrder.getNote())
+                .receiveAddress(oldOrder.getReceiveAddress())
+                .receivePhone(oldOrder.getReceivePhone())
+                .receiveName(oldOrder.getReceiveName())
+                .createdDate(oldOrder.getCreatedDate())
+                .receivedDate(oldOrder.getReceivedDate())
+                .orderStatus(oldOrder.getStatus())
+                .totalPrice(oldOrder.getTotalPrice())
+                .build();
+    }
+
+    @Override
     public OrderResponse changeStatus(Long id, OrderRequestStatus orderRequestStatus) {
-        Orders oldOrder= orderRepo.findById(id).orElseThrow(()-> new NoSuchElementException("Not found this order"));
+        Orders oldOrder = orderRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Not found this order"));
 
         oldOrder.setStatus(orderRequestStatus.getStatus());
+
+        orderRepo.save(oldOrder);
+
+        return OrderResponse.builder()
+                .id(oldOrder.getId())
+                .code(oldOrder.getCode())
+                .note(oldOrder.getNote())
+                .receiveAddress(oldOrder.getReceiveAddress())
+                .receivePhone(oldOrder.getReceivePhone())
+                .receiveName(oldOrder.getReceiveName())
+                .createdDate(oldOrder.getCreatedDate())
+                .receivedDate(oldOrder.getReceivedDate())
+                .orderStatus(oldOrder.getStatus())
+                .totalPrice(oldOrder.getTotalPrice())
+                .build();
+    }
+
+    @Override
+    public OrderResponse cancelOrderByUser(Long id) throws CustomException {
+        User userCurrent = authService.getCurrentUser().getUser();
+        Orders oldOrder = orderRepo.findByUserAndId(userCurrent, id).orElseThrow(() -> new CustomException("Not found this order", HttpStatus.NOT_FOUND));
+
+        if (oldOrder.getStatus().equals(OrderStatus.WAITING)) {
+            oldOrder.setStatus(OrderStatus.CANCEL);
+        }else {
+            throw new CustomException("Can not cancel this order",HttpStatus.CONFLICT);
+        }
 
         orderRepo.save(oldOrder);
 
