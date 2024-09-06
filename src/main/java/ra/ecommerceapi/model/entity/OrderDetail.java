@@ -12,7 +12,7 @@ import ra.ecommerceapi.model.base.BaseObject;
 @Getter
 @Setter
 @Builder
-public class OderDetail extends BaseObject {
+public class OrderDetail extends BaseObject {
 
     private Double unitPrice;
     private Integer orderQuantity;

@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @Builder
 
-public class UserInformation {
+public class UserResponse {
     private String email;
     private String password;
     private String fullName;

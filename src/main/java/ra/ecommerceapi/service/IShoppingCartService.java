@@ -2,7 +2,10 @@ package ra.ecommerceapi.service;
 
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.CartRequest;
+import ra.ecommerceapi.model.dto.request.CheckoutRequest;
 import ra.ecommerceapi.model.dto.response.CartResponse;
+import ra.ecommerceapi.model.dto.response.OrderResponse;
+import ra.ecommerceapi.model.entity.Orders;
 import ra.ecommerceapi.model.entity.ShoppingCart;
 import ra.ecommerceapi.model.entity.User;
 
@@ -15,10 +18,12 @@ public interface IShoppingCartService {
 
     CartResponse save(CartRequest cartRequest) throws CustomException;
 
-    CartResponse save(CartRequest cartRequest,Long id);
+    CartResponse save(CartRequest cartRequest,Long id) throws CustomException;
 
     void delete(Long id);
 
     void clear();
+
+    OrderResponse checkout(CheckoutRequest checkoutRequest) throws CustomException;
 
 }

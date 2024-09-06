@@ -2,10 +2,10 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ra.ecommerceapi.exception.CheckDuplicateName;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.entity.Category;
 import ra.ecommerceapi.repository.ICategoryRepo;
 import ra.ecommerceapi.service.ICategoryService;
@@ -13,7 +13,6 @@ import ra.ecommerceapi.service.ICategoryService;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +41,10 @@ public class CategoryServiceImpl implements ICategoryService {
 
 
     @Override
-    public Category save(Category category) throws CheckDuplicateName {
+    public Category save(Category category) throws CustomException {
 
         if (categoryRepo.existsByName(category.getName())) {
-            throw new CheckDuplicateName("Exist this category name");
+            throw new CustomException("This category already exist", HttpStatus.CONFLICT);
         }
 
         category.setStatus(true);
@@ -54,11 +53,11 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public Category save(Category category, Long id) throws CheckDuplicateName {
+    public Category save(Category category, Long id) throws CustomException {
         Category oldCategory = findById(id);
 
         if (!category.getName().equals(oldCategory.getName()) && categoryRepo.existsByName(category.getName())) {
-            throw new CheckDuplicateName("Exist this category name");
+            throw new CustomException("This category already exist", HttpStatus.CONFLICT);
         }
 
         oldCategory.setName(category.getName());

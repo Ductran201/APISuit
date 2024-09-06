@@ -48,4 +48,7 @@ public interface IUserRepo extends JpaRepository<User, Long> {
     @Query("update User u set u.status = (not u.status) where u.id = :id")
     @Modifying
     void toggleStatus(@Param("id") Long id);
+
+    @Query("select u.avatar from User u where u.id= :id")
+    String getAvatarById(Long id);
 }

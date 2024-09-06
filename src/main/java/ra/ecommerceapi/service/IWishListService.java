@@ -1,12 +1,11 @@
 package ra.ecommerceapi.service;
 
-import ra.ecommerceapi.model.dto.response.ProductUserDTO;
+import ra.ecommerceapi.model.dto.response.ProductResponse;
 
-import java.util.List;
 import java.util.Set;
 
 public interface IWishListService {
-    Set<ProductUserDTO> findAll();
+    Set<ProductResponse> findAll();
 
     void toggleWishList(Long idProduct);
 

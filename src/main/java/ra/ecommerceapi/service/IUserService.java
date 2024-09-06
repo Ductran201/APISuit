@@ -3,6 +3,8 @@ package ra.ecommerceapi.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ra.ecommerceapi.exception.CustomException;
+import ra.ecommerceapi.model.dto.request.UserRequest;
+import ra.ecommerceapi.model.dto.response.UserResponse;
 import ra.ecommerceapi.model.entity.User;
 
 import java.util.List;
@@ -16,12 +18,11 @@ public interface IUserService {
 
     void deleteRoleForUser(Long userId,Long roleId) throws CustomException;
 
-
     User findUserExceptAdminById(Long id);
 
     User save(User user);
 
-    User save(User user,Long id);
+    UserResponse save(UserRequest userRequest);
 
     User findByEmail(String email);
 
@@ -29,6 +30,10 @@ public interface IUserService {
 
     void toggleStatus(Long id);
 
+    UserResponse findById();
+
     User findById(Long id);
+
+
 
 }

@@ -10,6 +10,7 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.dto.request.CartRequest;
+import ra.ecommerceapi.model.dto.request.CheckoutRequest;
 import ra.ecommerceapi.service.IShoppingCartService;
 
 @Controller
@@ -19,8 +20,8 @@ public class ShoppingCartController {
     private final IShoppingCartService shoppingCartService;
 
     @GetMapping("/list")
-    public ResponseEntity<?> listPagination(){
-        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.findAll(),EHttpStatus.SUCCESS,200),HttpStatus.OK);
+    public ResponseEntity<?> listPagination() {
+        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.findAll(), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
     @PostMapping("/add")
@@ -33,25 +34,26 @@ public class ShoppingCartController {
     }
 
     @PutMapping("/items/{cartId}")
-    public ResponseEntity<?> editQuantity(@Valid @RequestBody CartRequest cartRequest ,@PathVariable Long cartId){
-        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.save(cartRequest,cartId),EHttpStatus.SUCCESS,200),HttpStatus.OK);
+    public ResponseEntity<?> editQuantity(@Valid @RequestBody CartRequest cartRequest, @PathVariable Long cartId) throws CustomException {
+        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.save(cartRequest, cartId), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
     @DeleteMapping("/items/{cartId}")
-    public ResponseEntity<?> delete(@PathVariable Long cartId){
+    public ResponseEntity<?> delete(@PathVariable Long cartId) {
         shoppingCartService.delete(cartId);
-        return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/clear")
-    public ResponseEntity<?> deleteAllCart(){
+    public ResponseEntity<?> deleteAllCart() {
         shoppingCartService.clear();
-        return new ResponseEntity<>(null,HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<?> checkout(){
-        return null;
+    public ResponseEntity<?> checkout(@Valid @RequestBody CheckoutRequest checkoutRequest) throws CustomException {
+        return new ResponseEntity<>(new ResponseWrapper<>(shoppingCartService.checkout(checkoutRequest),EHttpStatus.SUCCESS,201), HttpStatus.CREATED);
+
     }
 }
 

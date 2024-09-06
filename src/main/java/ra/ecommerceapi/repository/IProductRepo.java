@@ -5,10 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ra.ecommerceapi.model.dto.response.ProductUserDTO;
 import ra.ecommerceapi.model.entity.Product;
-
-import java.util.List;
 
 public interface IProductRepo extends JpaRepository<Product, Long> {
     @Query("select p.image from Product p where p.id= :id")

@@ -1,12 +1,11 @@
 package ra.ecommerceapi.controller.user;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
-import ra.ecommerceapi.model.dto.response.ProductUserDTO;
+import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.service.IWishListService;
 
 import java.util.Set;
@@ -19,8 +18,7 @@ public class WishListController {
 
     @GetMapping("")
     public ResponseEntity<?> findAll(){
-        Set<ProductUserDTO> wishList= wishListService.findAll();
-        return ResponseEntity.ok().body(new ResponseWrapper<>(wishList,EHttpStatus.SUCCESS,200));
+        return ResponseEntity.ok().body(new ResponseWrapper<>(wishListService.findAll(),EHttpStatus.SUCCESS,200));
     }
 
     @PostMapping("/{idProduct}")

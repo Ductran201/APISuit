@@ -4,10 +4,11 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import ra.ecommerceapi.exception.CheckDuplicateName;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.ProductRequest;
-import ra.ecommerceapi.model.dto.response.ProductUserDTO;
+import ra.ecommerceapi.model.dto.response.ProductResponse;
 import ra.ecommerceapi.model.entity.Product;
 import ra.ecommerceapi.repository.IProductRepo;
 import ra.ecommerceapi.service.ICategoryService;
@@ -38,16 +39,17 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Product save(ProductRequest productRequest) throws CheckDuplicateName {
+    public Product save(ProductRequest productRequest) throws CustomException {
 
         if (productRepo.existsByName(productRequest.getName())){
-            throw new CheckDuplicateName("Exist this category name");
+            throw new CustomException("This product already exist", HttpStatus.CONFLICT);
         }
 
         Product product = Product.builder()
                 .name(productRequest.getName())
+                .price(productRequest.getPrice())
+                .stock(productRequest.getStock())
                 .description(productRequest.getDescription())
-//                .status(true)
                 .createdDate(new Date())
                 .updatedDate(new Date())
                 .category(categoryService.findById(productRequest.getCategoryId()))
@@ -66,19 +68,24 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Product save(ProductRequest productRequest, Long id) throws CheckDuplicateName {
+    public Product save(ProductRequest productRequest, Long id) throws CustomException {
 
         if (!Objects.equals(productRequest.getName(), findById(id).getName()) && productRepo.existsByName(productRequest.getName())){
-            throw new CheckDuplicateName("Exist this category name");
+            throw new CustomException("This product already exist",HttpStatus.CONFLICT);
         }
 
         Product oldProduct = findById(id);
 
+        // change manually by set each field or can be use modelMapper
         oldProduct.setStatus(productRequest.getStatus());
         oldProduct.setName(productRequest.getName());
         oldProduct.setDescription(productRequest.getDescription());
         oldProduct.setCategory(categoryService.findById(productRequest.getCategoryId()));
+        oldProduct.setPrice(productRequest.getPrice());
+        oldProduct.setStock(oldProduct.getStock()+ productRequest.getStock());
         oldProduct.setUpdatedDate(new Date());
+        // wrong this
+        oldProduct.setStatus(oldProduct.getStatus());
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             oldProduct.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
@@ -101,14 +108,14 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public Page<ProductUserDTO> findAllPaginationUser(String search, Pageable pageable) {
-        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+    public Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable) {
+        return productRepo.findAllByNameContainsAndStatusTrueOrDescriptionContainsAndStatusTrue(search,search,pageable).map(p->modelMapper.map(p, ProductResponse.class));
     }
 
     @Override
-    public Page<ProductUserDTO> findAllByCategoryIdAndStatusTrue(Long id,Pageable pageable) {
+    public Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable) {
 
-        Page<ProductUserDTO> productUserDTOS= productRepo.findAllByCategoryIdAndStatusTrue(id,pageable).map(p->modelMapper.map(p, ProductUserDTO.class));
+        Page<ProductResponse> productUserDTOS= productRepo.findAllByCategoryIdAndStatusTrue(id,pageable).map(p->modelMapper.map(p, ProductResponse.class));
         if (productUserDTOS.isEmpty()){
             throw new NoSuchElementException("Not found the product of category");
         }

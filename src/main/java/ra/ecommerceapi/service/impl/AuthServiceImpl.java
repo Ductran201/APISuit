@@ -2,6 +2,7 @@ package ra.ecommerceapi.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,7 +11,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ra.ecommerceapi.exception.CheckDuplicateName;
 import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.RoleName;
 import ra.ecommerceapi.model.dto.request.SignInRequest;
@@ -18,6 +18,7 @@ import ra.ecommerceapi.model.dto.request.SignUpRequest;
 import ra.ecommerceapi.model.dto.response.JWTResponse;
 import ra.ecommerceapi.model.entity.Role;
 import ra.ecommerceapi.model.entity.User;
+import ra.ecommerceapi.repository.IUserRepo;
 import ra.ecommerceapi.security.jwt.JWTProvider;
 import ra.ecommerceapi.security.principle.UserDetailsCustom;
 import ra.ecommerceapi.service.IAuthService;
@@ -32,7 +33,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements IAuthService {
-    private final IUserService userService;
+    private final IUserRepo userRepo;
     private final IRoleService roleService;
     private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
@@ -40,9 +41,9 @@ public class AuthServiceImpl implements IAuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Boolean signUp(SignUpRequest signUpRequest) throws CheckDuplicateName {
-        if (userService.existsByEmail(signUpRequest.getEmail())) {
-            throw new CheckDuplicateName("This email already exist");
+    public Boolean signUp(SignUpRequest signUpRequest) throws CustomException {
+        if (userRepo.existsByEmail(signUpRequest.getEmail())) {
+            throw new CustomException("This email already exist", HttpStatus.CONFLICT);
         }
 
         Set<Role> roleSet = new HashSet<>();
@@ -51,16 +52,20 @@ public class AuthServiceImpl implements IAuthService {
             roleSet.add(roleService.findByRoleName(RoleName.ROLE_USER));
         } else {
             signUpRequest.getRoles().forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        roleSet.add(roleService.findByRoleName(RoleName.ROLE_ADMIN));
-                    case "manager":
-                        roleSet.add(roleService.findByRoleName(RoleName.ROLE_MANAGER));
-                    case "user":
-                        roleSet.add(roleService.findByRoleName(RoleName.ROLE_USER));
-                        break;
-                    default:
-                        throw new RuntimeException("role not found");
+                try {
+                    switch (role) {
+                        case "admin":
+                            roleSet.add(roleService.findByRoleName(RoleName.ROLE_ADMIN));
+                        case "manager":
+                            roleSet.add(roleService.findByRoleName(RoleName.ROLE_MANAGER));
+                        case "user":
+                            roleSet.add(roleService.findByRoleName(RoleName.ROLE_USER));
+                            break;
+                        default:
+                            throw new CustomException("role not found", HttpStatus.BAD_REQUEST);
+                    }
+                } catch (CustomException e) {
+                    throw new RuntimeException(e); // Rethrow or handle the exception as appropriate
                 }
             });
         }
@@ -73,7 +78,7 @@ public class AuthServiceImpl implements IAuthService {
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setRoleSet(roleSet);
 
-        userService.save(user);
+        userRepo.save(user);
         return true;
     }
 
@@ -84,12 +89,12 @@ public class AuthServiceImpl implements IAuthService {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(signInRequest.getEmail(), signInRequest.getPassword()));
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Invalid email or password");
+            throw new CustomException("Invalid email or password", HttpStatus.UNAUTHORIZED);
         }
         UserDetailsCustom userDetailsCustom = (UserDetailsCustom) authentication.getPrincipal();
         // CHECK STATUS
-        if (!userDetailsCustom.getUser().getStatus()){
-            throw new CustomException("This email has been block by admin");
+        if (!userDetailsCustom.getUser().getStatus()) {
+            throw new CustomException("This email has been block by admin", HttpStatus.FORBIDDEN);
         }
 
         String accessToken = jwtProvider.generateAccessToken(userDetailsCustom);

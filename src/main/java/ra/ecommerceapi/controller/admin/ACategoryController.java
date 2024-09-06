@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import ra.ecommerceapi.exception.CheckDuplicateName;
+import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.constant.EHttpStatus;
 import ra.ecommerceapi.model.dto.ResponseWrapper;
 import ra.ecommerceapi.model.entity.Category;
@@ -50,7 +50,7 @@ public class ACategoryController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> add(@Valid @RequestBody Category category) throws CheckDuplicateName {
+    public ResponseEntity<?> add(@Valid @RequestBody Category category) throws CustomException {
         return new ResponseEntity<>(ResponseWrapper.builder()
                 .data(categoryService.save(category))
                 .status(EHttpStatus.SUCCESS)
@@ -59,7 +59,7 @@ public class ACategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> edit(@PathVariable Long id, @Valid @RequestBody Category category) throws CheckDuplicateName {
+    public ResponseEntity<?> edit(@PathVariable Long id, @Valid @RequestBody Category category) throws CustomException {
         return new ResponseEntity<>(ResponseWrapper.builder()
                 .data(categoryService.save(category, id))
                 .status(EHttpStatus.SUCCESS)

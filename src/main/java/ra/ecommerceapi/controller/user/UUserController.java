@@ -1,12 +1,13 @@
 package ra.ecommerceapi.controller.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import ra.ecommerceapi.model.constant.EHttpStatus;
+import ra.ecommerceapi.model.dto.ResponseWrapper;
+import ra.ecommerceapi.model.dto.request.UserRequest;
 import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IUserService;
 
@@ -18,12 +19,12 @@ public class UUserController {
 
     @GetMapping("")
     public ResponseEntity<?> getInformation() {
-        return null;
+        return new ResponseEntity<>(new ResponseWrapper<>(userService.findById(), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateInformation() {
-        return null;
+    public ResponseEntity<?> updateInformation(@ModelAttribute UserRequest userRequest) {
+        return new ResponseEntity<>(new ResponseWrapper<>(userService.save(userRequest), EHttpStatus.SUCCESS, 200), HttpStatus.OK);
     }
 
     @PutMapping("/change-password")

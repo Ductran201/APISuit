@@ -22,7 +22,7 @@ public class AUserController {
 
     @GetMapping("")
     public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
-            ,@PageableDefault(page = 0,size = 2,sort = "id",direction = Sort.Direction.DESC) Pageable pageable) {
+            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
                         .data(userService.findAllPaginationAdmin(search, pageable))
@@ -46,23 +46,19 @@ public class AUserController {
 
     // Add role for user
     @PostMapping("/{userId}/role/{roleId}")
-    public ResponseEntity<?> addRoleForUser(@PathVariable Long userId,@PathVariable Long roleId) throws CustomException {
-        userService.addRoleForUser(userId,roleId);
-        return ResponseEntity.ok().body(
-                new ResponseWrapper<>("Add role successfully",EHttpStatus.SUCCESS,200)
-        );
+    public ResponseEntity<?> addRoleForUser(@PathVariable Long userId, @PathVariable Long roleId) throws CustomException {
+        userService.addRoleForUser(userId, roleId);
+        return new ResponseEntity<>(new ResponseWrapper<>("Add role successfully", EHttpStatus.SUCCESS, 201), HttpStatus.CREATED);
 
     }
 
     @DeleteMapping("/{userId}/role/{roleId}")
-    public ResponseEntity<?> deleteRoleForUser(@PathVariable Long userId,@PathVariable Long roleId) throws CustomException {
-        userService.deleteRoleForUser(userId,roleId);
+    public ResponseEntity<?> deleteRoleForUser(@PathVariable Long userId, @PathVariable Long roleId) throws CustomException {
+        userService.deleteRoleForUser(userId, roleId);
 //        return ResponseEntity.ok().body(
 //                new ResponseWrapper<>("Delete role successfully",EHttpStatus.SUCCESS,200));
         return new ResponseEntity<>("Delete role successfully", HttpStatus.NO_CONTENT);
     }
-
-
 
 
 }
