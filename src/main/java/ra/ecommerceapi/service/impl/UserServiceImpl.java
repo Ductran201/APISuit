@@ -9,7 +9,6 @@ import ra.ecommerceapi.exception.CustomException;
 import ra.ecommerceapi.model.dto.request.UserRequest;
 import ra.ecommerceapi.model.dto.response.UserResponse;
 import ra.ecommerceapi.model.entity.User;
-import ra.ecommerceapi.repository.IRoleRepo;
 import ra.ecommerceapi.repository.IUserRepo;
 import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IRoleService;
@@ -17,7 +16,6 @@ import ra.ecommerceapi.service.IUserService;
 import ra.ecommerceapi.service.UploadService;
 
 import java.util.Date;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -137,18 +135,6 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-//        public PageDto findAll(Pageable pageable) {
-//            Pageable custom = PageRequest.of(pageable.getPageNumber(),5,pageable.getSort());
-//            Page<Student> page = studentRepository.findAll(custom);
-//            return PageDto.builder().data(page.getContent())
-//                    .pages(page.getTotalPages())
-//                    .hasNext(page.hasNext())
-//                    .hasPrev(page.hasPrevious())
-//                    .size(page.getSize())
-//                    .number(page.getNumber())
-//                    .totalElements(page.getTotalElements())
-//                    .sort(page.getSort())
-//                    .build();
 
 }
 

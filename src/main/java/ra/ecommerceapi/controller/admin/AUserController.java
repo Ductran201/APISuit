@@ -1,6 +1,7 @@
 package ra.ecommerceapi.controller.admin;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -22,7 +23,11 @@ public class AUserController {
 
     @GetMapping("")
     public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
-            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+            , @PageableDefault(page = 0, size = 2) Pageable pageable,
+                                            @RequestParam(defaultValue = "id") String sortField,
+                                            @RequestParam(defaultValue = "DESC") String sortDirection) {
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
                         .data(userService.findAllPaginationAdmin(search, pageable))

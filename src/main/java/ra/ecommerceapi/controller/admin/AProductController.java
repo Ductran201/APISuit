@@ -2,6 +2,7 @@ package ra.ecommerceapi.controller.admin;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -26,9 +27,15 @@ public class AProductController {
      * @param pageable Pageable
      * @apiNote handle get all products with pagination and search for admin role
      */
+
     @GetMapping("")
     public ResponseEntity<?> listPagination(@RequestParam(defaultValue = "") String search
-            , @PageableDefault(page = 0, size = 2, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+            , @PageableDefault(page = 0, size = 2) Pageable pageable
+            , @RequestParam(defaultValue = "id") String sortField
+            , @RequestParam(defaultValue = "DESC") String sortDirection) {
+        // DESC have to transfer to string
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortField);
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ResponseEntity.ok().body(
                 ResponseWrapper.builder()
                         .data(productService.findAllPaginationAdmin(search, pageable))
@@ -70,15 +77,21 @@ public class AProductController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        productService.findById(id);
+        findById(id);
         productService.delete(id);
         return new ResponseEntity<>(ResponseWrapper.builder()
                 .data("Delete successfully")
                 .status(EHttpStatus.SUCCESS)
                 .code(200)
-                .build(), HttpStatus.OK);    }
+                .build(), HttpStatus.OK);
+    }
 
-
+    @PutMapping("/{id}/toggleStatus")
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        findById(id);
+        productService.toggleStatus(id);
+        return ResponseEntity.ok().body(new ResponseWrapper<>("Change status successfully!!", EHttpStatus.SUCCESS, 200));
+    }
 
 
 }

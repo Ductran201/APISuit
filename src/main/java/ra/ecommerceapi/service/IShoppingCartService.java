@@ -5,9 +5,7 @@ import ra.ecommerceapi.model.dto.request.CartRequest;
 import ra.ecommerceapi.model.dto.request.CheckoutRequest;
 import ra.ecommerceapi.model.dto.response.CartResponse;
 import ra.ecommerceapi.model.dto.response.OrderResponse;
-import ra.ecommerceapi.model.entity.Orders;
 import ra.ecommerceapi.model.entity.ShoppingCart;
-import ra.ecommerceapi.model.entity.User;
 
 import java.util.List;
 

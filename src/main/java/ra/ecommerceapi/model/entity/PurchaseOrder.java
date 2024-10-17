@@ -5,7 +5,9 @@ import lombok.*;
 import ra.ecommerceapi.model.base.BaseObject;
 import ra.ecommerceapi.model.constant.OrderStatus;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @NoArgsConstructor
@@ -13,24 +15,26 @@ import java.util.Date;
 @Getter
 @Setter
 @Builder
-public class Orders {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PurchaseOrder extends BaseObject {
+    //    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
-    private String code;
-    private Double totalPrice;
+    private OrderStatus orderStatus;
+    private UUID code;
+    private BigDecimal totalPrice;
     private String note;
     private String receiveName;
     private String receiveAddress;
     private String receivePhone;
+    //    @Temporal(TemporalType.DATE)
+//    private Date createdDate;
     @Temporal(TemporalType.DATE)
-    private Date createdDate;
+    private Date updatedDate;
     @Temporal(TemporalType.DATE)
     private Date receivedDate;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "userId")
     private User user;
 
 }

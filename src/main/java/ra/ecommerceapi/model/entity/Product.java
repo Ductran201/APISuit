@@ -13,19 +13,14 @@ import java.util.Date;
 @Builder
 @Entity
 public class Product extends BaseObject {
-
     @Column(unique = true)
     private String name;
     private String description;
-    private String image;
-    private Double price;
-    private Integer stock;
-    @Temporal(TemporalType.DATE)
-    private Date createdDate;
+    private String image; // maybe have many image because product just diff in size
     @Temporal(TemporalType.DATE)
     private Date updatedDate;
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "categoryId")
     private Category category;
 
 }

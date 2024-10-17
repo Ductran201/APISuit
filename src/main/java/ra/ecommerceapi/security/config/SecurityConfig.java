@@ -15,9 +15,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import ra.ecommerceapi.model.constant.RoleName;
 import ra.ecommerceapi.security.jwt.JWTFilter;
 import ra.ecommerceapi.security.principle.UserDetailsServiceCustom;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -45,11 +48,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .cors(cf -> cf.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of("http://localhost:5173/","http://localhost:5174/","http://localhost:5175/"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    config.setAllowedMethods(List.of("*"));
+                    config.setExposedHeaders(List.of("*"));
+                    return config;
+                }))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        url -> url.requestMatchers("api.com/v2/admin/**").hasAnyAuthority(RoleName.ROLE_ADMIN.name())
-                                .requestMatchers("api.com/v2/manager/**").hasAnyAuthority(RoleName.ROLE_MANAGER.name())
-                                .requestMatchers("api.com/v2/user/**").hasAnyAuthority(RoleName.ROLE_USER.name())
+                        url -> url.requestMatchers("api.com/v2/admin1/**").hasAnyAuthority(RoleName.ROLE_ADMIN.name())
+                                .requestMatchers("api.com/v2/manager1/**").hasAnyAuthority(RoleName.ROLE_MANAGER.name())
+                                .requestMatchers("api.com/v2/user1/**").hasAnyAuthority(RoleName.ROLE_USER.name())
                                 .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())

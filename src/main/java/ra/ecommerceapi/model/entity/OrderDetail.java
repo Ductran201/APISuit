@@ -6,6 +6,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 import ra.ecommerceapi.model.base.BaseObject;
 
+import java.math.BigDecimal;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,14 +15,13 @@ import ra.ecommerceapi.model.base.BaseObject;
 @Setter
 @Builder
 public class OrderDetail extends BaseObject {
-
-    private Double unitPrice;
-    private Integer orderQuantity;
     private String name;
+    private BigDecimal unitPrice;
+    private Integer orderQuantity;
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "productDetailId")
+    private ProductDetail productDetail;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Orders orders;
+    @JoinColumn(name = "orderId")
+    private PurchaseOrder purchaseOrder;
 }

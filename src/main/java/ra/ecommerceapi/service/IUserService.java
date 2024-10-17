@@ -11,29 +11,34 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IUserService {
+//FOR ADMIN
 
-    Page<User> findAllPaginationAdmin(String search,Pageable pageable);
+    Page<User> findAllPaginationAdmin(String search, Pageable pageable);
 
-    void addRoleForUser(Long userId,Long roleId) throws CustomException;
+    void addRoleForUser(Long userId, Long roleId) throws CustomException;
 
-    void deleteRoleForUser(Long userId,Long roleId) throws CustomException;
-
-    User findUserExceptAdminById(Long id);
+    void deleteRoleForUser(Long userId, Long roleId) throws CustomException;
 
     User save(User user);
 
+
+    // FOR USER
+
     UserResponse save(UserRequest userRequest);
+
+    UserResponse findById();
+
+    // COMMON
+
+    User findUserExceptAdminById(Long id);
+
+    void toggleStatus(Long id);
 
     User findByEmail(String email);
 
     Boolean existsByEmail(String email);
 
-    void toggleStatus(Long id);
-
-    UserResponse findById();
-
     User findById(Long id);
-
 
 
 }

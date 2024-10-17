@@ -10,22 +10,25 @@ import ra.ecommerceapi.model.entity.Product;
 import java.util.List;
 
 public interface IProductService {
-    List<Product> findAll();
+    //    FOR ADMIN
+    Page<Product> findAllPaginationAdmin(String search, Pageable pageable);
 
     Product findById(Long id);
 
     Product save(ProductRequest productRequest) throws CustomException;
 
-    Product save(ProductRequest productRequest,Long id) throws CustomException;
+    Product save(ProductRequest productRequest, Long id) throws CustomException;
 
-    void  delete(Long id);
+    void delete(Long id);
 
-    Page<Product> findAllPaginationAdmin(String search, Pageable pageable);
+    void toggleStatus(Long id);
+    // FOR USER
 
     Page<ProductResponse> findAllPaginationUser(String search, Pageable pageable);
 
     Page<ProductResponse> findAllByCategoryIdAndStatusTrue(Long id, Pageable pageable);
-
+    // COMMON
+    List<Product> findAll();
 
 
 }

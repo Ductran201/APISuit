@@ -47,16 +47,13 @@ public class ProductServiceImpl implements IProductService {
 
         Product product = Product.builder()
                 .name(productRequest.getName())
-                .price(productRequest.getPrice())
-                .stock(productRequest.getStock())
                 .description(productRequest.getDescription())
-                .createdDate(new Date())
                 .updatedDate(new Date())
                 .category(categoryService.findById(productRequest.getCategoryId()))
                 .build();
 
-        product.setStatus(true);
-
+        product.setStatus(false);
+        product.setCreatedDate(new Date());
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             product.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
@@ -69,23 +66,17 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Product save(ProductRequest productRequest, Long id) throws CustomException {
+        Product oldProduct = findById(id);
 
         if (!Objects.equals(productRequest.getName(), findById(id).getName()) && productRepo.existsByName(productRequest.getName())){
             throw new CustomException("This product already exist",HttpStatus.CONFLICT);
         }
 
-        Product oldProduct = findById(id);
-
         // change manually by set each field or can be use modelMapper
-        oldProduct.setStatus(productRequest.getStatus());
         oldProduct.setName(productRequest.getName());
         oldProduct.setDescription(productRequest.getDescription());
         oldProduct.setCategory(categoryService.findById(productRequest.getCategoryId()));
-        oldProduct.setPrice(productRequest.getPrice());
-        oldProduct.setStock(oldProduct.getStock()+ productRequest.getStock());
         oldProduct.setUpdatedDate(new Date());
-        // wrong this
-        oldProduct.setStatus(oldProduct.getStatus());
 
         if (productRequest.getFile() != null && productRequest.getFile().getSize() > 0) {
             oldProduct.setImage(uploadService.uploadFileToServer(productRequest.getFile()));
@@ -100,6 +91,11 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public void delete(Long id) {
         productRepo.deleteById(id);
+    }
+
+    @Override
+    public void toggleStatus(Long id) {
+        productRepo.toggleStatus(id);
     }
 
     @Override

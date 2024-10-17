@@ -8,7 +8,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
-import ra.ecommerceapi.model.entity.Orders;
 
 import java.io.IOException;
 import java.io.InputStream;

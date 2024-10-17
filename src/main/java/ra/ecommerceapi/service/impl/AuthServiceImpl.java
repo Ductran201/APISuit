@@ -23,7 +23,6 @@ import ra.ecommerceapi.security.jwt.JWTProvider;
 import ra.ecommerceapi.security.principle.UserDetailsCustom;
 import ra.ecommerceapi.service.IAuthService;
 import ra.ecommerceapi.service.IRoleService;
-import ra.ecommerceapi.service.IUserService;
 
 import java.util.Date;
 import java.util.HashSet;

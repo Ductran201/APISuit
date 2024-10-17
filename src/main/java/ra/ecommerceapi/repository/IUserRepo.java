@@ -13,11 +13,21 @@ import java.util.Optional;
 
 @Transactional
 public interface IUserRepo extends JpaRepository<User, Long> {
+    //FOR ADMIN
+    @Query("SELECT u FROM User u " +
+            "WHERE 'ROLE_ADMIN' NOT IN (SELECT r.roleName FROM u.roleSet r) " +
+            "AND u.fullName LIKE CONCAT('%', :fullName, '%')")
+    Page<User> findAllByFullNameContainingExceptAdmin(String fullName, Pageable pageable);
+
+    @Query("update User u set u.status = (not u.status) where u.id = :id")
+    @Modifying
+    void toggleStatus(@Param("id") Long id);
 
     Optional<User> findByEmail(String email);
 
-    Boolean existsByEmail(String email);
+    //FOR USER
 
+    // COMMON
     @Query(value = "SELECT u.* " +
             "FROM user u " +
             "WHERE u.id = :id " +
@@ -29,26 +39,9 @@ public interface IUserRepo extends JpaRepository<User, Long> {
             ");", nativeQuery = true)
     Optional<User> findUserExceptAdminById(Long id);
 
-//    @Query(value = "SELECT *\n" +
-//            "FROM (SELECT u.*\n" +
-//            "      FROM user u\n" +
-//            "      WHERE u.id NOT IN (SELECT ur.user_id\n" +
-//            "                         FROM user_role ur\n" +
-//            "                                  JOIN role r ON ur.role_id = r.id\n" +
-//            "                         WHERE r.roleName = 'ROLE_ADMIN')) t\n" +
-//            "WHERE fullName LIKE '%' :fullName '%'",nativeQuery = true)
-//    Page<User> findAllByFullNameContainingExceptAdmin(String fullName, Pageable pageable);
-//
-
-    @Query("SELECT u FROM User u " +
-            "WHERE 'ROLE_ADMIN' NOT IN (SELECT r.roleName FROM u.roleSet r) " +
-            "AND u.fullName LIKE CONCAT('%', :fullName, '%')")
-    Page<User> findAllByFullNameContainingExceptAdmin(String fullName, Pageable pageable);
-
-    @Query("update User u set u.status = (not u.status) where u.id = :id")
-    @Modifying
-    void toggleStatus(@Param("id") Long id);
-
     @Query("select u.avatar from User u where u.id= :id")
     String getAvatarById(Long id);
+
+    Boolean existsByEmail(String email);
+
 }
